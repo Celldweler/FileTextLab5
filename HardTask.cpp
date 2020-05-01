@@ -1,4 +1,4 @@
-﻿#include "Stdafx.h"
+#include "Stdafx.h"
 
 /*
 Файл состоит из k компонент структуры, где каждая 
@@ -34,7 +34,7 @@ void hard()
         row, col;
     printf("\nВведите k(количество компонент структуры): "); CheckDigit(count_komponent);
     printf("\nВведите размерность матриц(m x n): \n\tколичество строк: "); CheckDigit(row); 
-    printf("\nКоличество столбцов: "); CheckDigit(col);
+    printf("\tКоличество столбцов: "); CheckDigit(col);
     Matrix* MassiveMat = new Matrix[count_komponent];
     std::string filename = "firstfile.txt";
     //printf("\nВведите название 1-го файла: "); cin>> filename;
@@ -42,6 +42,7 @@ void hard()
 
     DisplayFile(filename.c_str(), count_komponent, row, col);
 
+    cout << "\nСумыы соответсвующих компонет структуры записаные в файл: \n";
     string secfilename = "secondfile.txt";
     WorkFunc(MassiveMat, secfilename, count_komponent, row, col);
     ifstream f_in; f_in.open(secfilename, ios::in);
@@ -50,12 +51,12 @@ void hard()
     for (size_t j = 0; j < count_komponent; j++)
     {
         int i = 0, q = 0;
-        while (f_in >> Pointer[i] && i < row * col) { i++; }
+        while (f_in >> Pointer[i] && i < (row * col)-1) { i++; }
         printf("\n %d's  first component matrix \n", (Sector + 1));
         DisplayMatrix(Pointer, row, col);
-        while (f_in >> Pointer[q] && q < row * col) { q++; }
+     /*   while (f_in >> Pointer[q] && q < row * col) { q++; }
         printf("\n %d's  second component matrix \n", (Sector + 1));
-        DisplayMatrix(Pointer, row, col);
+        DisplayMatrix(Pointer, row, col);*/
         Sector++;
     }
 }
@@ -106,7 +107,7 @@ int* InitMatrix(unsigned l, unsigned n, unsigned m)
 {
     unsigned i;
     int* Pointer = (int*)malloc(n * m * sizeof(int));
-    for (i = 0; i < n * m; i++) { Pointer[i] = l + 1; }
+    for (i = 0; i < n * m; i++) { Pointer[i] = rand()%10; }
     return Pointer;
 }
 
@@ -166,10 +167,10 @@ void DisplayFile(const char* FileName, int count_matrix, unsigned n, unsigned m)
     for (size_t j = 0; j < count_matrix; j++)
     {
         int i = 0, q = 0;
-        while (f_in >> Pointer[i] && i<n*m) {  i++; }
+        while (f_in >> Pointer[i] && i < (n*m)-1) {  i++; }
         printf("\n %d's  first component matrix \n", (Sector + 1));
         DisplayMatrix(Pointer, n, m);
-        while (f_in >> Pointer[q] && q < n * m) { q++; }
+        while (f_in >> Pointer[q] && q < (n * m) - 1) { q++; }
         printf("\n %d's  second component matrix \n", (Sector + 1));
         DisplayMatrix(Pointer, n, m);       
         Sector++;
@@ -177,82 +178,3 @@ void DisplayFile(const char* FileName, int count_matrix, unsigned n, unsigned m)
 }
 
 
-
-/*
-void DeleteUnwantedMatrixOfFile(char* String, unsigned count_wr_mat, unsigned n, unsigned m)
-{
-    int* Pointer = (int*)malloc(sizeof(int) * m * n * count_wr_mat);
-    int  BufSize = sizeof(int) * n * m * count_wr_mat;
-    long lastmatrixforw = (long)(sizeof(int) * n * m * count_wr_mat);
-    int* Simple = nullptr,
-        Sum = 0;
-
-    FILE* FilePointer = fopen(String, "rb");
-    FILE* TempFile = fopen("TempFile", "wb");
-    if (FilePointer == NULL)
-    {
-        printf("Can't open file to read.");
-        getchar();
-        abort();
-    }
-
-    long set_possition = 0;
-    int count_rd_mat = 1;
-
-    fread(Pointer, BufSize, 1, FilePointer);
-
-    fwrite(Pointer, BufSize, 1, TempFile);
-
-    rewind(FilePointer);
-
-    fclose(FilePointer);
-    fclose(TempFile);
-
-    FilePointer = fopen(String, "w+b");
-
-    TempFile = fopen("TempFile", "rb");
-
-    fread(Pointer, BufSize, 1, TempFile);
-
-    fwrite(Pointer, BufSize, 1, FilePointer);
-
-    fclose(FilePointer);
-    fclose(TempFile);
-
-    free(Pointer);
-    free(Simple);
-}
-
-void FillNewFileUnwantedMatrix(char* FileName1, char* FileName2, unsigned set_pos, unsigned count_matrix, unsigned row, unsigned col)
-{
-    int BufSize = sizeof(int) * row * col,
-        counter_matrix = 0;
-    int* Pointer = (int*)malloc(BufSize);
-    unsigned i;
-    FILE* FilePointer1 = fopen(FileName1, "rb");
-    FILE* FilePointer2 = fopen(FileName2, "wb");
-
-    if (FilePointer1 == NULL)
-    {
-        printf("Can't open file to write.");
-        getchar();
-        abort();
-    }
-
-
-    long set_possition = sizeof(int) * row * col * set_pos;
-
-    for (i = 0; i < count_matrix; i++)
-    {
-        fseek(FilePointer1, set_possition, SEEK_SET);
-
-        fread(Pointer, BufSize, 1, FilePointer1);
-        counter_matrix++;
-        fwrite(Pointer, BufSize, 1, FilePointer2);
-        set_possition += static_cast<long>(sizeof(int) * row * col);
-    }
-    fclose(FilePointer1);
-    fclose(FilePointer2);
-
-    free(Pointer);
-}*/
