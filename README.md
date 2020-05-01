@@ -1,3 +1,3 @@
 # FileTextLab5
-              Variant 15
+               Variant 15
               
