@@ -42,6 +42,7 @@ void hard()
 
     DisplayFile(filename.c_str(), count_komponent, row, col);
 
+
     cout << "\nСумыы соответсвующих компонет структуры записаные в файл: \n";
     string secfilename = "secondfile.txt";
     WorkFunc(MassiveMat, secfilename, count_komponent, row, col);
@@ -76,6 +77,69 @@ void WorkFunc(Matrix* masmat,string FileNameSec, int count_komponent, int row, i
     f_out.close();
 }
 
+int BlockWriteFile(const char* FileName, Matrix* MassiveMat, unsigned count_matrix, unsigned row, unsigned col)
+{
+    int BufSize = sizeof(int) * row * col,
+        counter_matrix = 0;
+
+    //Matrix* matrix = new Matrix[count_matrix];
+    unsigned i;
+
+    ofstream f_out;
+    f_out.open(FileName, ios::out);
+
+    if (!f_out.is_open())
+    {
+        printf("Can't open file to write.");
+        getchar();
+        abort();
+    }
+
+    for (i = 0; i < count_matrix; i++)
+    {
+        MassiveMat[i].mat1 = InitMatrix(i, row, col);
+        MassiveMat[i].mat2 = InitMatrix(i, row, col);
+        for (size_t j = 0; j < row * col; j++)
+        {
+            f_out << MassiveMat[i].mat1[j] << " ";
+        }
+        f_out << "\n";
+        for (size_t j = 0; j < row * col; j++)
+        {
+            f_out << MassiveMat[i].mat2[j] << " ";
+        }
+        f_out << "\n";
+    }
+    f_out.close();
+    return counter_matrix;
+}
+
+void DisplayFile(const char* FileName, int count_matrix, unsigned n, unsigned m)
+{
+    int BufSize = sizeof(int) * n * m, Sector = 0;
+    int* Pointer = FreeMemory(n, m);
+
+    ifstream f_in;
+    f_in.open(FileName, ios::in);
+
+    if (!f_in.is_open()) { printf("\nCan't open file to read."); getchar(); abort(); }
+
+    for (size_t j = 0; j < count_matrix; j++)
+    {
+        printf("\n %d's  Struct \n", (j + 1));
+
+        int i = 0, q = 0;
+        while (f_in >> Pointer[i] && i < (n * m) - 1) { i++; }
+        printf("\n\t%d's  first component matrix \n", (Sector + 1));
+        DisplayMatrix(Pointer, n, m);
+        while (f_in >> Pointer[q] && q < (n * m) - 1) { q++; }
+        printf("\n\t%d's  second component matrix \n", (Sector + 1));
+        DisplayMatrix(Pointer, n, m);
+        Sector++;
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////////
+
 void CheckDigit(unsigned& anydigit)
 {
     while (true)
@@ -96,6 +160,7 @@ void DisplayMatrix(int* Pointer, unsigned n, unsigned m)
 {
     unsigned i, j;
     for (i = 0; i < n; i++) {
+        cout << "\t";
         for (j = 0; j < m; j++) {
             printf("%4d", *(Pointer + i * m + j));
         }
@@ -116,65 +181,4 @@ int* FreeMemory(unsigned n, unsigned m)
     int* Pointer = (int*)malloc(n * m * sizeof(int));
     return Pointer;
 }
-
-int BlockWriteFile(const char* FileName,Matrix* MassiveMat, unsigned count_matrix, unsigned row, unsigned col)
-{
-    int BufSize = sizeof(int) * row * col,
-        counter_matrix = 0;
-   
-    //Matrix* matrix = new Matrix[count_matrix];
-    unsigned i;
-
-    ofstream f_out;
-    f_out.open(FileName, ios::out);
-
-    if (!f_out.is_open())
-    {
-        printf("Can't open file to write.");
-        getchar();
-        abort();
-    }
-
-    for (i = 0; i < count_matrix; i++)
-    {
-        MassiveMat[i].mat1 = InitMatrix(i, row, col);
-        MassiveMat[i].mat2 = InitMatrix(i, row, col);
-        for (size_t j = 0; j < row*col; j++)
-        {
-            f_out << MassiveMat[i].mat1[j]<< " ";
-        }
-       f_out << "\n";
-        for (size_t j = 0; j < row * col; j++)
-        {
-            f_out << MassiveMat[i].mat2[j] << " ";
-        }       
-       f_out << "\n";
-    }
-    f_out.close();
-    return counter_matrix;
-}
-
-void DisplayFile(const char* FileName, int count_matrix, unsigned n, unsigned m)
-{
-    int BufSize = sizeof(int) * n * m, Sector = 0;
-    int* Pointer = FreeMemory(n, m);
-
-    ifstream f_in;
-    f_in.open(FileName, ios::in);
-
-    if (!f_in.is_open()) { printf("\nCan't open file to read."); getchar(); abort(); }
-
-    for (size_t j = 0; j < count_matrix; j++)
-    {
-        int i = 0, q = 0;
-        while (f_in >> Pointer[i] && i < (n*m)-1) {  i++; }
-        printf("\n %d's  first component matrix \n", (Sector + 1));
-        DisplayMatrix(Pointer, n, m);
-        while (f_in >> Pointer[q] && q < (n * m) - 1) { q++; }
-        printf("\n %d's  second component matrix \n", (Sector + 1));
-        DisplayMatrix(Pointer, n, m);       
-        Sector++;
-    }
-}
-
 
